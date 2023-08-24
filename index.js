@@ -63,7 +63,7 @@ const main = async () => {
             /**
              * Add labels according to file types.
              */
-            if (file === "package.json") {
+            if (file.filename === "package.json") {
                 found_packageJson = true;
                 acc.additions += file.additions;
                 acc.deletions += file.deletions;
@@ -113,9 +113,9 @@ const main = async () => {
                 issue_number: pr_number,
                 body: `
             Pull Request #${pr_number} has been updated with the modification of package.json: \n
-            - ${diffData.changes} changes \n
-            - ${diffData.additions} additions \n
-            - ${diffData.deletions} deletions \n
+            - ${acc.changes} changes \n
+            - ${acc.additions} additions \n
+            - ${acc.deletions} deletions \n
           `
             });
         }
