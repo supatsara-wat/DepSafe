@@ -65,9 +65,9 @@ const main = async () => {
              */
             if (file.filename === "package.json") {
                 found_packageJson = true;
-                acc.additions += file.additions;
-                acc.deletions += file.deletions;
-                acc.changes += file.changes;
+                diffData.additions += file.additions;
+                diffData.deletions += file.deletions;
+                diffData.changes += file.changes;
             }
             const fileExtension = file.filename.split('.').pop();
             switch (fileExtension) {
@@ -113,23 +113,23 @@ const main = async () => {
                 issue_number: pr_number,
                 body: `
             Pull Request #${pr_number} has been updated with the modification of package.json: \n
-            - ${acc.changes} changes \n
-            - ${acc.additions} additions \n
-            - ${acc.deletions} deletions \n
+            - ${diffData.changes} changes \n
+            - ${diffData.additions} additions \n
+            - ${diffData.deletions} deletions \n
           `
             });
         }
-        await octokit.rest.issues.createComment({
-            owner,
-            repo,
-            issue_number: pr_number,
-            body: `
-        Pull Request #${pr_number} has been updated with: \n
-        - ${diffData.changes} changes \n
-        - ${diffData.additions} additions \n
-        - ${diffData.deletions} deletions \n
-      `
-        });
+        //await octokit.rest.issues.createComment({
+        //    owner,
+        //    repo,
+        //    issue_number: pr_number,
+        //    body: `
+        //Pull Request #${pr_number} has been updated with: \n
+        //- ${diffData.changes} changes \n
+        //- ${diffData.additions} additions \n
+        //- ${diffData.deletions} deletions \n
+        //`
+        // });
 
     } catch (error) {
         core.setFailed(error.message);
