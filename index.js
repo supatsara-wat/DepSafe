@@ -45,15 +45,15 @@ const main = async () => {
             deletions: 0,
             changes: 0
         };
-
+        let found_packageJson = false;
         // Reference for how to use Array.reduce():
         // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Reduce
-        diffData = changedFiles.reduce((acc, file) => {
-            acc.additions += file.additions;
-            acc.deletions += file.deletions;
-            acc.changes += file.changes;
-            return acc;
-        }, diffData);
+        // diffData = changedFiles.reduce((acc, file) => {
+        //    acc.additions += file.additions;
+        //    acc.deletions += file.deletions;
+        //    acc.changes += file.changes;
+        //    return acc;
+        //}, diffData);
 
         /**
          * Loop over all the files changed in the PR and add labels according 
@@ -63,6 +63,12 @@ const main = async () => {
             /**
              * Add labels according to file types.
              */
+            if (file === "package.json") {
+                found_packageJson = true;
+                acc.additions += file.additions;
+                acc.deletions += file.deletions;
+                acc.changes += file.changes;
+            }
             const fileExtension = file.filename.split('.').pop();
             switch (fileExtension) {
                 case 'md':
@@ -100,6 +106,19 @@ const main = async () => {
          * Create a comment on the PR with the information we compiled from the
          * list of changed files.
          */
+        if (found_packageJson === true) {
+            await octokit.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number: pr_number,
+                body: `
+            Pull Request #${pr_number} has been updated with the modification of package.json: \n
+            - ${diffData.changes} changes \n
+            - ${diffData.additions} additions \n
+            - ${diffData.deletions} deletions \n
+          `
+            });
+        }
         await octokit.rest.issues.createComment({
             owner,
             repo,
