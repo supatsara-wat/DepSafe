@@ -9839,12 +9839,12 @@ const main = async () => {
          * results.
          * Reference: https://octokit.github.io/rest.js/v18#pulls-list-files
          */
-        const { data: changedFiles } = await octokit.rest.pulls.listFiles({
+        const { data: changedFiles } = await octokit.paginate(octokit.pulls.listFiles, {
             owner,
             repo,
-            pull_number: pr_number,
+            pull_number: pr_number
         });
-
+        console.log(changedFiles)
 
         /**
          * Contains the sum of all the additions, deletions, and changes
@@ -9856,14 +9856,6 @@ const main = async () => {
             changes: 0
         };
         let found_packageJson = false;
-        // Reference for how to use Array.reduce():
-        // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Reduce
-        // diffData = changedFiles.reduce((acc, file) => {
-        //    acc.additions += file.additions;
-        //    acc.deletions += file.deletions;
-        //    acc.changes += file.changes;
-        //    return acc;
-        //}, diffData);
 
         /**
          * Loop over all the files changed in the PR and add labels according 
@@ -9878,37 +9870,6 @@ const main = async () => {
                 diffData.additions += file.additions;
                 diffData.deletions += file.deletions;
                 diffData.changes += file.changes;
-            }
-            const fileExtension = file.filename.split('.').pop();
-            switch (fileExtension) {
-                case 'md':
-                    await octokit.rest.issues.addLabels({
-                        owner,
-                        repo,
-                        issue_number: pr_number,
-                        labels: ['markdown'],
-                    });
-                case 'js':
-                    await octokit.rest.issues.addLabels({
-                        owner,
-                        repo,
-                        issue_number: pr_number,
-                        labels: ['javascript'],
-                    });
-                case 'yml':
-                    await octokit.rest.issues.addLabels({
-                        owner,
-                        repo,
-                        issue_number: pr_number,
-                        labels: ['yaml'],
-                    });
-                case 'yaml':
-                    await octokit.rest.issues.addLabels({
-                        owner,
-                        repo,
-                        issue_number: pr_number,
-                        labels: ['yaml'],
-                    });
             }
         }
 
@@ -9929,17 +9890,6 @@ const main = async () => {
           `
             });
         }
-        //await octokit.rest.issues.createComment({
-        //    owner,
-        //    repo,
-        //    issue_number: pr_number,
-        //    body: `
-        //Pull Request #${pr_number} has been updated with: \n
-        //- ${diffData.changes} changes \n
-        //- ${diffData.additions} additions \n
-        //- ${diffData.deletions} deletions \n
-        //`
-        // });
 
     } catch (error) {
         core.setFailed(error.message);
