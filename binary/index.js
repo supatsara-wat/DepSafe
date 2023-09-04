@@ -9840,12 +9840,14 @@ const main = async () => {
          * Reference: https://octokit.github.io/rest.js/v18#pulls-list-files
          */
 
-        const { data: changedFiles } = await octokit.paginate("GET /repos/:owner/:repo/pulls/:pull_number/files", {
+        console.log("start")
+
+        const files = await octokit.paginate("GET /repos/:owner/:repo/pulls/:pull_number/files", {
             owner: owner,
             repo: repo,
             pull_number: pr_number
         });
-        console.log(changedFiles)
+        console.log(files)
 
         /**
          * Contains the sum of all the additions, deletions, and changes
