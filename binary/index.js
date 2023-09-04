@@ -9839,9 +9839,10 @@ const main = async () => {
          * results.
          * Reference: https://octokit.github.io/rest.js/v18#pulls-list-files
          */
-        const { data: changedFiles } = await octokit.paginate(octokit.pulls.listFiles, {
-            owner,
-            repo,
+
+        const { data: changedFiles } = await octokit.paginate("GET /repos/:owner/:repo/pulls/:pull_number/files", {
+            owner: owner,
+            repo: repo,
             pull_number: pr_number
         });
         console.log(changedFiles)
