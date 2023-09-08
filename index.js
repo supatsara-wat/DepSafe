@@ -76,8 +76,8 @@ const main = async () => {
         for (const file of changedFiles) {
 
             count += 1;
-            const lineChanges = parsePatch(file.patch)
-            console.log(lineChanges)
+            const changedLines = parsePatch(file.patch)
+            console.log(changedLines.added)
 
             if (file.filename === "package.json") {
                 found_packageJson = true;
