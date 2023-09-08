@@ -133,7 +133,7 @@ const main = async () => {
         let combineMessage = [];
         combineMessage.push('# Please be aware!!')
         if (found_packageJson === true) {
-            combineMessage.push(`## Changes have been made to **package.json** file :triangular_flag_on_post: \n${diffData.additions} changes in \`package.json\``)
+            combineMessage.push(`## Changes have been made to **package.json** file :triangular_flag_on_post: \n:black_medium_small_square: ${diffData.additions} changes in \`package.json\``)
         }
 
         if (changedJSfiles.length >= 1) {
