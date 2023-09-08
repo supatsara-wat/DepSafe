@@ -9893,7 +9893,6 @@ const main = async () => {
 
         for (const file of changedFiles) {
 
-            count += 1;
             const changedLines = parsePatch(file.patch)
 
             if (changedLines.added.every(item => item.trim() === "")) {
