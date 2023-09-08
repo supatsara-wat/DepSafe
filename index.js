@@ -32,12 +32,11 @@ const main = async () => {
 
         console.log("start")
 
-        const files = await octokit.paginate("GET /repos/:owner/:repo/pulls/:pull_number/files", {
+        const changedFiles = await octokit.paginate("GET /repos/:owner/:repo/pulls/:pull_number/files", {
             owner: owner,
             repo: repo,
             pull_number: pr_number
         });
-        console.log(files)
 
         /**
          * Contains the sum of all the additions, deletions, and changes
@@ -54,10 +53,12 @@ const main = async () => {
          * Loop over all the files changed in the PR and add labels according 
          * to files types.
          **/
+        let count = 0;
         for (const file of changedFiles) {
             /**
              * Add labels according to file types.
              */
+            count += 1;
             if (file.filename === "package.json") {
                 found_packageJson = true;
                 diffData.additions += file.additions;
@@ -65,7 +66,7 @@ const main = async () => {
                 diffData.changes += file.changes;
             }
         }
-
+        console.log(count)
         /**
          * Create a comment on the PR with the information we compiled from the
          * list of changed files.
