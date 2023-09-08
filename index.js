@@ -89,6 +89,7 @@ const main = async () => {
         };
         let found_packageJson = false;
         let changedJSfiles = [];
+        let countChangedLines = 0;
 
         /**
          * Loop over all the files changed in the PR and add labels according 
@@ -109,7 +110,8 @@ const main = async () => {
             if (fileExtension === 'js') {
                 const numChangedLines = detectJSChange(changedLines.added)
                 if (numChangedLines >= 1) {
-                    changedJSfiles.push(file.filename + ': ' + numChangedLines.toString() + 'line(s) modified require() function');
+                    changedJSfiles.push('- ' + file.filename + ': ' + numChangedLines.toString() + ' changes');
+                    countChangedLines += numChangedLines;
                 }
             }
 
@@ -128,19 +130,31 @@ const main = async () => {
          * Create a comment on the PR with the information we compiled from the
          * list of changed files.
          */
+        let jsonComment = '';
+        let jsComment = '';
         if (found_packageJson === true) {
-            await octokit.rest.issues.createComment({
-                owner,
-                repo,
-                issue_number: pr_number,
-                body: `
-            Pull Request #${pr_number} has been updated with the modification of [ package.json ]: \n
-            - ${diffData.changes} changes \n
-            - ${diffData.additions} additions \n
-            - ${diffData.deletions} deletions \n
-          `
-            });
+            jsonComment = `${diffData.additions} changes have been made to [ package.json ]`
         }
+
+        if (changedJSfiles.length >= 1) {
+            let combinedString = changedJSfiles.join('\n');
+            jsComment = ` 
+            ${countChangedLines} changes have been made to [ require() ]:  \n
+            ${combinedString} 
+           `
+        }
+
+        await octokit.rest.issues.createComment({
+            owner,
+            repo,
+            issue_number: pr_number,
+            body: `
+            Please be aware!! \n
+            ${jsonComment} \n
+            ${jsComment}
+      `
+        });
+
 
     } catch (error) {
         core.setFailed(error.message);
