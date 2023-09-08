@@ -1,6 +1,25 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 
+function parsePatch(patch) {
+    const added = [];
+    const removed = [];
+
+    const lines = patch.split('\n');
+    for (const line of lines) {
+        if (line.startsWith('+')) {
+            added.push(line.substring(1));
+        } else if (line.startsWith('-')) {
+            removed.push(line.substring(1));
+        }
+    }
+
+    return {
+        added,
+        removed
+    };
+}
+
 const main = async () => {
     try {
         /**
@@ -55,10 +74,11 @@ const main = async () => {
          **/
         let count = 0;
         for (const file of changedFiles) {
-            /**
-             * Add labels according to file types.
-             */
+
             count += 1;
+            const lineChanges = parsePatch(file.patch)
+            console.log(lineChanges)
+
             if (file.filename === "package.json") {
                 found_packageJson = true;
                 diffData.additions += file.additions;
