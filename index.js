@@ -1,6 +1,6 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
-
+const github2 = require('@actions/github');
 const main = async () => {
     try {
         /**
