@@ -21,6 +21,7 @@ const main = async () => {
          * https://octokit.github.io/rest.js/v18
          **/
         const octokit = new github.getOctokit(token);
+        
 
         /**
          * We need to fetch the list of files that were changes in the Pull Request
