@@ -81,16 +81,14 @@ const main = async () => {
         let changedJSfiles = [];
         let changedJsonfiles = [];
 
-        let count = 0;
         for (const file of changedFiles) {
 
             count += 1;
             const changedLines = parsePatch(file.patch)
 
-            console.log(`${file.filename} ${getFileExtension(file.filename)}`)
-
-            const allEmpty = changedLines.added.every(item => item.trim() === "");
-            console.log(changedLines.added);
+            if (changedLines.added.every(item => item.trim() === "")) {
+                continue;
+            }
 
             const fileExtension = getFileExtension(file.filename)
             if (fileExtension === 'js') {
@@ -101,22 +99,18 @@ const main = async () => {
             }
 
             if (file.filename.includes('package.json')) {
-                if (allEmpty === false) {
-                    changedJsonfiles.push(`:black_medium_small_square: ${file.additions.toString()} changes in \`${file.filename}\``)
-                }
+                changedJsonfiles.push(`:black_medium_small_square: ${file.additions.toString()} changes in \`${file.filename}\``)
             }
         }
-        console.log(count)
-        console.log(changedJSfiles.join('\n'))
 
         let combineMessage = [];
         combineMessage.push('# Please be aware!!')
         if (changedJsonfiles.length >= 1) {
-            combineMessage.push(`## Changes have been made to **package.json** file :triangular_flag_on_post: \n:black_medium_small_square: \n${changedJsonfiles.join('\n')}`)
+            combineMessage.push(`## Changes have been made to **package.json** file :triangular_flag_on_post: \n${changedJsonfiles.join('\n')}`)
         }
 
         if (changedJSfiles.length >= 1) {
-            combineMessage.push(`## Changes have been made to **require()** in .js file(s) :triangular_flag_on_post:  \n${changedJSfiles.join('\n')} `)
+            combineMessage.push(`## Changes have been made to **require()** in .js file(s) :triangular_flag_on_post: \n${changedJSfiles.join('\n')} `)
         }
 
 
