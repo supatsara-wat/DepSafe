@@ -110,7 +110,7 @@ const main = async () => {
             if (fileExtension === 'js') {
                 const numChangedLines = detectJSChange(changedLines.added)
                 if (numChangedLines >= 1) {
-                    changedJSfiles.push('- ' + file.filename + ': ' + numChangedLines.toString() + ' changes');
+                    changedJSfiles.push('--- ' + file.filename + ': ' + numChangedLines.toString() + ' changes');
                     countChangedLines += numChangedLines;
                 }
             }
@@ -130,29 +130,25 @@ const main = async () => {
          * Create a comment on the PR with the information we compiled from the
          * list of changed files.
          */
-        let jsonComment = '';
-        let jsComment = '';
+        let combineMessage = [];
+        combineMessage.push('Please be aware!!')
         if (found_packageJson === true) {
-            jsonComment = `${diffData.additions} changes have been made to [ package.json ]`
+            combineMessage.push(`${diffData.additions} changes have been made to [ package.json ]`)
         }
 
         if (changedJSfiles.length >= 1) {
-            let combinedString = changedJSfiles.join('\n');
-            jsComment = ` 
+            combineMessage.push(` 
             ${countChangedLines} changes have been made to [ require() ]:  \n
-            ${combinedString} 
-           `
+            ${changedJSfiles.join('\n')} 
+           `)
         }
+
 
         await octokit.rest.issues.createComment({
             owner,
             repo,
             issue_number: pr_number,
-            body: `
-            Please be aware!! \n
-            ${jsonComment} \n
-            ${jsComment}
-      `
+            body: `${combineMessage.join('\n')}`
         });
 
 
