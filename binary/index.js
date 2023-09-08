@@ -9948,8 +9948,7 @@ const main = async () => {
 
         if (changedJSfiles.length >= 1) {
             joinText = changedJSfiles.join('\n')
-            combineMessage.push(` 
-            ${countChangedLines} changes have been made to [ require() ] in .js file:  \n${joinText} 
+            combineMessage.push(` ${countChangedLines} changes have been made to [ require() ] in .js file:  \n${joinText} 
            `)
         }
 
@@ -9958,9 +9957,7 @@ const main = async () => {
             owner,
             repo,
             issue_number: pr_number,
-            body: `\`\`\`
-            ${combineMessage.join('\n')}
-            \`\`\`
+            body: `\`\`\` ${combineMessage.join('\n')}
             `
         });
 
