@@ -16,3 +16,4 @@ inputs:
 runs:
   using: 'node16'
   main: 'binary/index.js'
+  
