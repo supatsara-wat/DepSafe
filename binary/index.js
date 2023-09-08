@@ -9917,7 +9917,7 @@ const main = async () => {
 
             const fileExtension = getFileExtension(file.filename)
             if (fileExtension === 'js') {
-                if (detectJSChange(changedLines.added)) {
+                if (detectJSChange(changedLines.added) === true) {
                     console.log('found');
                 }
             }
