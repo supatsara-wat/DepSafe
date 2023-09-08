@@ -78,23 +78,9 @@ const main = async () => {
             pull_number: pr_number
         });
 
-        /**
-         * Contains the sum of all the additions, deletions, and changes
-         * in all the files in the Pull Request.
-         **/
-        let diffData = {
-            additions: 0,
-            deletions: 0,
-            changes: 0
-        };
-        let found_packageJson = false;
         let changedJSfiles = [];
-        let countChangedLines = 0;
+        let changedJsonfiles = [];
 
-        /**
-         * Loop over all the files changed in the PR and add labels according 
-         * to files types.
-         **/
         let count = 0;
         for (const file of changedFiles) {
 
@@ -111,35 +97,26 @@ const main = async () => {
                 const numChangedLines = detectJSChange(changedLines.added)
                 if (numChangedLines >= 1) {
                     changedJSfiles.push(`:black_medium_small_square: ${numChangedLines.toString()} changes in \`${file.filename}\``);
-                    countChangedLines += numChangedLines;
                 }
             }
 
-            if (file.filename === "package.json") {
+            if (file.filename.includes('package.json')) {
                 if (allEmpty === false) {
-                    found_packageJson = true;
-                    diffData.additions += file.additions;
-                    diffData.deletions += file.deletions;
-                    diffData.changes += file.changes;
+                    changedJsonfiles.push(`:black_medium_small_square: ${file.additions.toString()} changes in \`${file.filename}\``)
                 }
             }
         }
         console.log(count)
         console.log(changedJSfiles.join('\n'))
-        /**
-         * Create a comment on the PR with the information we compiled from the
-         * list of changed files.
-         */
+
         let combineMessage = [];
         combineMessage.push('# Please be aware!!')
-        if (found_packageJson === true) {
-            combineMessage.push(`## Changes have been made to **package.json** file :triangular_flag_on_post: \n:black_medium_small_square: ${diffData.additions} changes in \`package.json\``)
+        if (changedJsonfiles.length >= 1) {
+            combineMessage.push(`## Changes have been made to **package.json** file :triangular_flag_on_post: \n:black_medium_small_square: \n${changedJsonfiles.join('\n')}`)
         }
 
         if (changedJSfiles.length >= 1) {
-            joinText = changedJSfiles.join('\n')
-            combineMessage.push(`## Changes have been made to **require()** in .js file(s) :triangular_flag_on_post:  \n${joinText} 
-           `)
+            combineMessage.push(`## Changes have been made to **require()** in .js file(s) :triangular_flag_on_post:  \n${changedJSfiles.join('\n')} `)
         }
 
 
