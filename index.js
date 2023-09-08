@@ -80,6 +80,7 @@ const main = async () => {
 
             const allEmpty = changedLines.added.every(item => item.trim() === "");
             console.log(allEmpty);
+            console.log(changedLines.added);
 
             if (file.filename === "package.json") {
                 found_packageJson = true;
