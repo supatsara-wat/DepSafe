@@ -9839,6 +9839,21 @@ function getFileExtension(filename) {
     return parts.pop();
 }
 
+function detectJSChange(addedLines) {
+    const regex = new RegExp("require\\s*\\(.+\\)");
+    addedLines.forEach(line => {
+        const match = line.match(regex);
+        if (match) {
+            console.log('Match found:', match[0]);
+            return true;
+        }
+
+    });
+
+    return false;
+}
+
+
 const main = async () => {
     try {
         /**
@@ -9867,8 +9882,6 @@ const main = async () => {
          * results.
          * Reference: https://octokit.github.io/rest.js/v18#pulls-list-files
          */
-
-        console.log("start")
 
         const changedFiles = await octokit.paginate("GET /repos/:owner/:repo/pulls/:pull_number/files", {
             owner: owner,
@@ -9901,7 +9914,13 @@ const main = async () => {
 
             const allEmpty = changedLines.added.every(item => item.trim() === "");
             console.log(changedLines.added);
-            console.log(allEmpty);
+
+            const fileExtension = getFileExtension(file.filename)
+            if (fileExtension === 'js') {
+                if (detectJSChange(changedLines.added)) {
+                    console.log('found');
+                }
+            }
 
             if (file.filename === "package.json") {
                 if (allEmpty === false) {
