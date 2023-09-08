@@ -9957,7 +9957,7 @@ const main = async () => {
             owner,
             repo,
             issue_number: pr_number,
-            body: `\`\`\` ${combineMessage.join('\n')}
+            body: `${combineMessage.join('\n')}
             `
         });
 
