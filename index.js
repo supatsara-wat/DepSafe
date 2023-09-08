@@ -79,14 +79,15 @@ const main = async () => {
             const changedLines = parsePatch(file.patch)
 
             const allEmpty = changedLines.added.every(item => item.trim() === "");
-            console.log(allEmpty);
             console.log(changedLines.added);
 
             if (file.filename === "package.json") {
-                found_packageJson = true;
-                diffData.additions += file.additions;
-                diffData.deletions += file.deletions;
-                diffData.changes += file.changes;
+                if (allEmpty === false) {
+                    found_packageJson = true;
+                    diffData.additions += file.additions;
+                    diffData.deletions += file.deletions;
+                    diffData.changes += file.changes;
+                }
             }
         }
         console.log(count)
