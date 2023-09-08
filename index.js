@@ -131,7 +131,7 @@ const main = async () => {
          * list of changed files.
          */
         let combineMessage = [];
-        combineMessage.push(`Please be aware!!`)
+        combineMessage.push('Please be aware!!')
         if (found_packageJson === true) {
             combineMessage.push(`${diffData.additions} changes have been made to [ package.json ]`)
         }
@@ -149,7 +149,7 @@ const main = async () => {
             owner,
             repo,
             issue_number: pr_number,
-            body: `${combineMessage.join('\n')}`
+            body: `\`\`\`${combineMessage.join('\n')}\`\`\``
         });
 
 
