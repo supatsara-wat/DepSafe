@@ -9920,7 +9920,7 @@ const main = async () => {
             if (fileExtension === 'js') {
                 const numChangedLines = detectJSChange(changedLines.added)
                 if (numChangedLines >= 1) {
-                    changedJSfiles.push(`:black_medium_small_square: ${numChangedLines.toString()} changes in <mark>${file.filename}</mark>`);
+                    changedJSfiles.push(`:black_medium_small_square: ${numChangedLines.toString()} changes in \`${file.filename}\``);
                     countChangedLines += numChangedLines;
                 }
             }
