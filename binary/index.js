@@ -9943,12 +9943,12 @@ const main = async () => {
         let combineMessage = [];
         combineMessage.push('# Please be aware!!')
         if (found_packageJson === true) {
-            combineMessage.push(`## ${diffData.additions} changes have been made to **package.json** file(s) :triangular_flag_on_post:`)
+            combineMessage.push(`## Changes have been made to **package.json** file :triangular_flag_on_post: \n${diffData.additions} changes in \`package.json\``)
         }
 
         if (changedJSfiles.length >= 1) {
             joinText = changedJSfiles.join('\n')
-            combineMessage.push(`## ${countChangedLines} changes have been made to **require()** in .js file(s) :triangular_flag_on_post:  \n${joinText} 
+            combineMessage.push(`## Changes have been made to **require()** in .js file(s) :triangular_flag_on_post:  \n${joinText} 
            `)
         }
 
