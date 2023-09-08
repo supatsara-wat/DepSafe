@@ -9841,14 +9841,14 @@ function getFileExtension(filename) {
 
 function detectJSChange(addedLines) {
     const regex = new RegExp("require\\s*\\(.+\\)");
-    addedLines.forEach(line => {
+    for (const line of addedLines) {
         const match = line.match(regex);
         if (match) {
             console.log('Match found:', match[0]);
             return true;
         }
 
-    });
+    }
 
     return false;
 }
