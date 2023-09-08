@@ -30,17 +30,16 @@ function getFileExtension(filename) {
 }
 
 function detectJSChange(addedLines) {
+    let numLines = 0;
     const regex = new RegExp("require\\s*\\(.+\\)");
     for (const line of addedLines) {
         const match = line.match(regex);
         if (match) {
-            console.log('Match found:', match[0]);
-            return true;
+            numLines += 1;
         }
-
     }
 
-    return false;
+    return numLines;
 }
 
 
@@ -89,6 +88,7 @@ const main = async () => {
             changes: 0
         };
         let found_packageJson = false;
+        let changedJSfiles = [];
 
         /**
          * Loop over all the files changed in the PR and add labels according 
@@ -107,8 +107,9 @@ const main = async () => {
 
             const fileExtension = getFileExtension(file.filename)
             if (fileExtension === 'js') {
-                if (detectJSChange(changedLines.added) === true) {
-                    console.log('found');
+                const numChangedLines = detectJSChange(changedLines.added)
+                if (numChangedLines >= 1) {
+                    changedJSfiles.push(file.filename + ': ' + numChangedLines.toString() + 'line(s) modified require() function');
                 }
             }
 
@@ -122,6 +123,7 @@ const main = async () => {
             }
         }
         console.log(count)
+        console.log(changedJSfiles.join('\n'))
         /**
          * Create a comment on the PR with the information we compiled from the
          * list of changed files.
