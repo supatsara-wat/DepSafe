@@ -9920,7 +9920,7 @@ const main = async () => {
             if (fileExtension === 'js') {
                 const numChangedLines = detectJSChange(changedLines.added)
                 if (numChangedLines >= 1) {
-                    changedJSfiles.push('--- ' + file.filename + ': ' + numChangedLines.toString() + ' changes');
+                    changedJSfiles.push(`+++ ${file.filename}: ${numChangedLines.toString()} changes`);
                     countChangedLines += numChangedLines;
                 }
             }
@@ -9941,15 +9941,16 @@ const main = async () => {
          * list of changed files.
          */
         let combineMessage = [];
-        combineMessage.push('Please be aware!!')
+        combineMessage.push(`Please be aware!!`)
         if (found_packageJson === true) {
             combineMessage.push(`${diffData.additions} changes have been made to [ package.json ]`)
         }
 
         if (changedJSfiles.length >= 1) {
+            joinText = changedJSfiles.join('\n')
             combineMessage.push(` 
             ${countChangedLines} changes have been made to [ require() ]:  \n
-            ${changedJSfiles.join('\n')} 
+            ${joinText} 
            `)
         }
 
