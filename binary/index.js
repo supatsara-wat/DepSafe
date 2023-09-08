@@ -9887,7 +9887,9 @@ const main = async () => {
 
             count += 1;
             const changedLines = parsePatch(file.patch)
-            console.log(changedLines.added)
+
+            const allEmpty = changedLines.added.every(item => item.trim() === "");
+            console.log(allEmpty);
 
             if (file.filename === "package.json") {
                 found_packageJson = true;
