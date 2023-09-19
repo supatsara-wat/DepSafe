@@ -1,4 +1,4 @@
-name: 'Unsafe PR Detection'
+name: 'Unsafe PR Detector'
 description: 'Send alerts when there is unsafe updates in a pull request'
 inputs:
   owner:
