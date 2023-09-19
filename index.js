@@ -1,4 +1,4 @@
-const core = require('@actions/core');
+const core = require('@actions/cores');
 const github = require('@actions/github');
 
 function parsePatch(patch) {
