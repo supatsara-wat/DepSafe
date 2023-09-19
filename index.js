@@ -20,7 +20,7 @@ function parsePatch(patch) {
     };
 }
 
-function getFileExtension(filename) {
+function getFileExtension(filenames) {
     const parts = filename.split('.');
     // Return null if there's no extension or if it's a hidden file (e.g., .gitignore)
     if (parts.length <= 1 || (parts.length === 2 && parts[0] === '')) {
