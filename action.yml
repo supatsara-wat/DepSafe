@@ -1,5 +1,8 @@
 name: 'Unsafe PR Detector'
 description: 'Send alerts when there is unsafe updates in a pull request'
+branding:
+  icon: 'alert-triangle'
+  color: 'yellow'
 inputs:
   owner:
     description: 'The owner of the repository'
