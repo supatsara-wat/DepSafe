@@ -1,3 +1,3 @@
 # Unsafe PR Detector
 
-This Github action will detect unsafe updates in package.json and .jsa files.
+This Github action will detect unsafe updates in package.json and .js files.
