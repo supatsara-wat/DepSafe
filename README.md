@@ -1,1 +1,1 @@
-# PR-metadata-action
+# Unsafe PR Detection

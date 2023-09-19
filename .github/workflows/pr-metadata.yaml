@@ -1,4 +1,4 @@
-name: PR metadata annotation
+name: Unsafe PR Detection
 
 on: 
   pull_request:
@@ -6,11 +6,11 @@ on:
 
 jobs:
 
-  annotate-pr:
+  detect-unsafe:
     runs-on: ubuntu-latest
-    name: Annotates pull request with metadata
+    name: Check pull request with changes
     steps:
-      - name: Annotate PR
+      - name: Check PR
         uses: supatsara-wat/PR-metadata-action@main
         with:
           owner: ${{ github.repository_owner }}

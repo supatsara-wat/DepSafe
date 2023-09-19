@@ -1,5 +1,5 @@
-name: 'PR Metadata Action'
-description: 'Adds pull request file changes as a comment to a newly opened PR'
+name: 'Unsafe PR Detection'
+description: 'Send alerts when there is unsafe updates in a pull request'
 inputs:
   owner:
     description: 'The owner of the repository'
