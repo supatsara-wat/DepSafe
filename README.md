@@ -1,6 +1,6 @@
 # Unsafe PR Detector
 
-This Github action will detect unsafe updates in package.json and .js files in a pull request.
+This Github action will detect updates in package.json and `require()` in .js files in a pull request.
 
 In order to use this action:
 1. Create a folder `.github/workflows`
@@ -29,6 +29,6 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-4. Don't forget to allow write permission for the GitHub workflow.
+4. Don't forget to allow write permission for the GitHub workflow!!
 `Settings tab > Actions > General and scroll down to the “Workflow permissions” section.`
 
