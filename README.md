@@ -1,6 +1,6 @@
 # DepSafe
 
-DepSafe can automatically detect `updates in package.json` and `require() in .js files` in a pull request. These updates are identified as unsafe dependency updates in **Lessons from the Long Tail: Analysing Unsafe Dependency Updates across Software Ecosystems** [1] paper.
+DepSafe can automatically detect `updates in package.json` and `require() in .js files` in a pull request. These updates are identified as unsafe dependency updates in **[Lessons from the Long Tail: Analysing Unsafe Dependency Updates across Software Ecosystems](https://arxiv.org/abs/2309.04197)** paper.
 
 ## Paper Abstract 
 
