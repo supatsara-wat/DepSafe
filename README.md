@@ -6,16 +6,23 @@ DepSafe can automatically detect `updates in package.json` and `require() in .js
 
 A risk in adopting third-party dependencies into an application is their potential to serve as a doorway for malicious code to be injected (most often unknowingly). While many initiatives from both industry and research communities focus on the most critical dependencies (i.e., those most depended upon within the ecosystem), little is known about whether the rest of the ecosystem suffers the same fate. Our vision is to promote and establish safer practises throughout the ecosystem. To motivate our vision, in this paper, we present preliminary data based on three representative samples from a population of 88,416 pull requests (PRs) and identify unsafe dependency updates (i.e., any pull request that risks being unsafe during runtime), which clearly shows that unsafe dependency updates are not limited to highly impactful libraries. To draw attention to the long tail, we propose a research agenda comprising six key research questions that further explore how to safeguard against these unsafe activities. This includes developing best practises to address unsafe dependency updates not only in top-tier libraries but throughout the entire ecosystem.
 
-<img src="./images/RQ1_keyword_new.png" alt="Frequency of unsafe dependency updates" width="300" height="200"/>
+## Results motivated our DepSafe
+
+<img src="./images/RQ1_keyword_new.png" alt="Frequency of unsafe dependency updates" width="500"/>
+
+When detecting unsafe dependency updates, the paper find that these updates are more likely to include the commands `require` in .js files and `new scripts` in package.json files. In contrast, the `net` and  `eval` functions are less prevalent compared to the others. Inspired by the findings, we develop DepSafe to automatically detect the top 2 most prevalent unsafe dependency updates in a pull request.
+
 ---
 
-In order to use this action:
+## Quick start guide
+
+In order to use DepSafe:
 1. Create a folder `.github/workflows`
 2. Create a file with .yaml extension
 3. Put this code in the file:
 
 ```
-name: Unsafe PR Detector
+name: DepSafe
 
 on: 
   pull_request:
@@ -28,7 +35,7 @@ jobs:
     name: Check pull request with changes
     steps:
       - name: Check PR
-        uses: supatsara-wat/Unsafe-PR-Detector@v1.0.0
+        uses: supatsara-wat/DepSafe@v1.0.0
         with:
           owner: ${{ github.repository_owner }}
           repo: ${{ github.event.repository.name }}
