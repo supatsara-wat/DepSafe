@@ -50,7 +50,9 @@ jobs:
 
 ## Next Actions
 
-**Implementing safer alternatives in place of identified unsafe updates.**: Safer alternatives to these unsafe practises exist; but each has its own drawbacks that might not attract use. For example, an alternative to using the `require()` function is to instead use the `import()` function. However, the key limitation is that the import function must be defined at the top of a class, while the require function can be executed at any point in the code.
+### Implementing safer alternatives in place of identified unsafe updates 
+
+Safer alternatives to these unsafe practises exist; but each has its own drawbacks that might not attract use. For example, an alternative to using the `require()` function is to instead use the `import()` function. However, the key limitation is that the import function must be defined at the top of a class, while the require function can be executed at any point in the code.
 
 ---
 
