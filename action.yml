@@ -1,4 +1,4 @@
-name: 'Unsafe PR Detector'
+name: 'DepSafe'
 description: 'Send alerts when there is unsafe updates in a pull request'
 branding:
   icon: 'alert-triangle'

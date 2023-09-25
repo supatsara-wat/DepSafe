@@ -1,4 +1,4 @@
-name: Unsafe PR Detector
+name: DepSafe
 
 on: 
   pull_request:
@@ -11,7 +11,7 @@ jobs:
     name: Check pull request with changes
     steps:
       - name: Check PR
-        uses: supatsara-wat/PR-metadata-action@main
+        uses: supatsara-wat/DepSafe@main
         with:
           owner: ${{ github.repository_owner }}
           repo: ${{ github.event.repository.name }}
