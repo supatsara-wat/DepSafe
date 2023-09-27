@@ -1,19 +1,13 @@
 name: DepSafe
 
 on: 
-  pull_request:
+  pull_request_target:
     types: [opened, reopened, synchronize]
 
 jobs:
 
   detect-unsafe:
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
-      issues: write
-      pull-requests: write
-      actions: read
     name: Check pull request with changes
     steps:
       - name: Check PR
