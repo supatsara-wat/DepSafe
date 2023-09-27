@@ -33,7 +33,7 @@ In order to use DepSafe:
 name: DepSafe
 
 on: 
-  pull_request:
+  pull_request_target:
     types: [opened, reopened, synchronize]
 
 jobs:
