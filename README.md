@@ -3,6 +3,7 @@
 https://github.com/marketplace/actions/depsafe
 
 add for test
+add for test2
 
 
 # DepSafe
