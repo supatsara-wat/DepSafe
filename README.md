@@ -1,6 +1,8 @@
 # DepSafe
 
-DepSafe can automatically detect `updates in package.json` and `require() in .js files` in a pull request. These updates are identified as **unsafe dependency updates** in **[Lessons from the Long Tail: Analysing Unsafe Dependency Updates across Software Ecosystems](https://arxiv.org/abs/2309.04197)** paper.
+Adopting third-party dependencies has the potential risk for injecting malicious code into your application. To protect your project, we created a very simple bot called **DepSafe**. DepSafe automatically detects any unsafe updates. One potential unsafe function is require(). The require() function is used to import external modules, which can be a subtle way to introduce risky code. 
+
+Basically the action will identify label and raise a comment to bring awareness of the dependency and the files that contain the unsafe update. The require function is one of six unsafe updates identified from our paper, [Lessons from the Long Tail: Analysing Unsafe Dependency Updates across Software Ecosystems paper](https://arxiv.org/abs/2309.04197). 
 
 ## Paper Abstract 
 
