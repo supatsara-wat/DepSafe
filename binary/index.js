@@ -9922,14 +9922,14 @@ const main = async () => {
             combineMessage.push(`## Changes have been made to **require()** in .js file(s) :triangular_flag_on_post: \n${changedJSfiles.join('\n')} `)
         }
 
-
-        await octokit.rest.issues.createComment({
-            owner,
-            repo,
-            issue_number: pr_number,
-            body: `${combineMessage.join('\n')}`
-        });
-
+        if (changedJsonfiles.length >= 1 || changedJSfiles.length >= 1) {
+            await octokit.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number: pr_number,
+                body: combineMessage.join('\n')
+            });
+        }
 
     } catch (error) {
         core.setFailed(error.message);
