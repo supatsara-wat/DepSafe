@@ -13,6 +13,7 @@ jobs:
       contents: read
       issues: write
       pull-requests: write
+      actions: read
     name: Check pull request with changes
     steps:
       - name: Check PR
