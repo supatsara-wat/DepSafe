@@ -8,6 +8,7 @@ jobs:
 
   detect-unsafe:
     runs-on: ubuntu-latest
+    permissions: write-all
     name: Check pull request with changes
     steps:
       - name: Check PR
