@@ -42,7 +42,7 @@ jobs:
     name: Check pull request with changes
     steps:
       - name: Check PR
-        uses: supatsara-wat/DepSafe@v1.0.0
+        uses: supatsara-wat/DepSafe@v1.0.0 (or other latest versions)
         with:
           owner: ${{ github.repository_owner }}
           repo: ${{ github.event.repository.name }}
