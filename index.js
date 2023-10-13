@@ -78,6 +78,14 @@ const main = async () => {
             pull_number: pr_number
         });
 
+        const pullRequests = await octokit.paginate("GET /repos/:owner/:repo/pulls", {
+            owner: owner,
+            repo: repo,
+            state: "open"
+        });
+
+        console.log(pullRequests)
+
         let changedJSfiles = [];
         let changedJsonfiles = [];
 
