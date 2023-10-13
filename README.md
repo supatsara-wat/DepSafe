@@ -3,7 +3,7 @@
 https://github.com/marketplace/actions/depsafe
 
 
-# DepSafe
+# DepSafe (test)
 
 Adopting third-party dependencies has the potential risk for injecting malicious code into your application. To protect your project, we created a very simple bot called **DepSafe**. DepSafe automatically detects any unsafe updates. One potential unsafe function is require(). The require() function is used to import external modules, which can be a subtle way to introduce risky code. 
 
