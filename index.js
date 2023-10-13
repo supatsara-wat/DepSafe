@@ -53,6 +53,9 @@ const main = async () => {
         const repo = core.getInput('repo', { required: true });
         const pr_number = core.getInput('pr_number', { required: true });
         const token = core.getInput('token', { required: true });
+        const triggerType = core.getInput('type', { required: true });
+
+        console.log(triggerType)
 
         /**
          * Now we need to create an instance of Octokit which will use to call
@@ -84,7 +87,13 @@ const main = async () => {
             state: "open"
         });
 
-        console.log(pullRequests)
+        let prNums = [];
+        if (triggerType === 'PR') {
+            for (const pr of pullRequests) {
+                prNums.push(pr.number)
+                console.log(pr.number);
+            }
+        }
 
         let changedJSfiles = [];
         let changedJsonfiles = [];
