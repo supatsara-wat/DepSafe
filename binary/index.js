@@ -9903,9 +9903,6 @@ const main = async () => {
         let prNums = triggerType === 'PR'
             ? pullRequests.map(pr => pr.number) : [pr_number];
 
-        console.log(triggerType)
-        console.log(prNums)
-
         for (const num of prNums) {
             const changedFiles = await octokit.paginate("GET /repos/:owner/:repo/pulls/:pull_number/files", {
                 owner: owner,
@@ -9938,7 +9935,7 @@ const main = async () => {
             }
 
             if (triggerType === 'PR') {
-                const combineMessage = alertMessages(changedJsonfiles, changedJsonfiles);
+                const combineMessage = alertMessages(changedJsonfiles, changedJSfiles);
                 if (combineMessage.length > 1) {
                     await octokit.rest.issues.createComment({
                         owner,
@@ -9959,6 +9956,7 @@ const main = async () => {
 
 // Call the main function to run the action
 main();
+
 })();
 
 module.exports = __webpack_exports__;

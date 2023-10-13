@@ -1,6 +1,5 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
-const github = require('@actions/github');
 
 function parsePatch(patch) {
     const added = [];
@@ -94,9 +93,6 @@ const main = async () => {
         let prNums = triggerType === 'PR'
             ? pullRequests.map(pr => pr.number) : [pr_number];
 
-        console.log(triggerType)
-        console.log(prNums)
-
         for (const num of prNums) {
             const changedFiles = await octokit.paginate("GET /repos/:owner/:repo/pulls/:pull_number/files", {
                 owner: owner,
@@ -129,7 +125,7 @@ const main = async () => {
             }
 
             if (triggerType === 'PR') {
-                const combineMessage = alertMessages(changedJsonfiles, changedJsonfiles);
+                const combineMessage = alertMessages(changedJsonfiles, changedJSfiles);
                 if (combineMessage.length > 1) {
                     await octokit.rest.issues.createComment({
                         owner,
