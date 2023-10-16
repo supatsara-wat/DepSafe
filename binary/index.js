@@ -9903,7 +9903,7 @@ const main = async () => {
         });
 
         let prNums = triggerType === 'check_pr'
-            ? pullRequests.map(pr => pr.number) : [core.getInput('pr_number', { required: true })];
+            ? pullRequests.map(pr => pr.number) : [core.getInput('pr_number', { required: false })];
 
         for (const num of prNums) {
             const changedFiles = await octokit.paginate("GET /repos/:owner/:repo/pulls/:pull_number/files", {
