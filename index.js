@@ -42,7 +42,7 @@ function detectJSChange(addedLines) {
     return numLines;
 }
 
-function alertMessages(changedJsonfiles, changedJSfiles) {
+async function alertMessages(owner, repo, pr_number, octokit, changedJsonfiles, changedJSfiles) {
     let combineMessage = [];
     combineMessage.push('# Please be aware!!');
     if (changedJsonfiles.length >= 1) {
@@ -53,44 +53,12 @@ function alertMessages(changedJsonfiles, changedJSfiles) {
         combineMessage.push(`## Changes have been made to **require()** in .js file(s) :triangular_flag_on_post: \n${changedJSfiles.join('\n')} `)
     }
 
-    return combineMessage;
-}
-
-async function checkLabelExists(owner, repo, labelName, octokit) {
-    try {
-        // Fetching all labels in the repository
-        const labels = await octokit.paginate(octokit.rest.issues.listLabelsForRepo, {
-            owner,
-            repo
-        });
-
-        // Checking if the label exists in the fetched labels
-        const labelExists = labels.some(label => label.name === labelName);
-        console.log(labels)
-        console.log(labelExists)
-
-        if (labelExists) {
-            await octokit.rest.issues.updateLabel({
-                owner,
-                repo,
-                name: labelName,
-                color: '#CD5C5C'
-            });
-            console.log('create new label');
-        }
-        else {
-            await octokit.rest.issues.createLabel({
-                owner,
-                repo,
-                name: labelName,
-                color: '#CD5C5C'
-            });
-            console.log('update label');
-        }
-    }
-    catch (error) {
-        core.setFailed(error.message);
-    }
+    await octokit.rest.issues.createComment({
+        owner,
+        repo,
+        issue_number: pr_number,
+        body: combineMessage.join('\n')
+    });
 }
 
 const main = async () => {
@@ -164,22 +132,27 @@ const main = async () => {
 
             if (changedJsonfiles.length >= 1 || changedJSfiles.length >= 1) {
                 if (triggerType === 'PR') {
-                    const combineMessage = alertMessages(changedJsonfiles, changedJSfiles);
-                    await octokit.rest.issues.createComment({
-                        owner,
-                        repo,
-                        issue_number: pr_number,
-                        body: combineMessage.join('\n')
-                    });
 
-                    const label = ':warning: unsafe'
-                    checkLabelExists(owner, repo, label, octokit);
-                    await octokit.rest.issues.addLabels({
-                        owner,
-                        repo,
-                        issue_number: pr_number,
-                        labels: [label],
-                    });
+                    alertMessages(owner, repo, pr_number, octokit, changedJsonfiles, changedJSfiles);
+                    if (changedJsonfiles.length >= 1) {
+                        const label = ':warning: unsafe package.json'
+                        await octokit.rest.issues.addLabels({
+                            owner,
+                            repo,
+                            issue_number: pr_number,
+                            labels: [label],
+                        });
+                    }
+
+                    if (changedJSfiles.length >= 1) {
+                        const label = ':warning: unsafe .js'
+                        await octokit.rest.issues.addLabels({
+                            owner,
+                            repo,
+                            issue_number: pr_number,
+                            labels: [label],
+                        });
+                    }
                 }
             }
 
