@@ -9852,83 +9852,101 @@ function detectJSChange(addedLines) {
     return numLines;
 }
 
+async function alertMessages(owner, repo, pr_number, octokit, changedJsonfiles, changedJSfiles) {
+    let combineMessage = [];
+    combineMessage.push('# Please be aware!!');
+    if (changedJsonfiles.length >= 1) {
+        combineMessage.push(`## Changes have been made to **package.json** file :triangular_flag_on_post: \n${changedJsonfiles.join('\n')}`)
+    }
+
+    if (changedJSfiles.length >= 1) {
+        combineMessage.push(`## Changes have been made to **require()** in .js file(s) :triangular_flag_on_post: \n${changedJSfiles.join('\n')} `)
+    }
+
+    await octokit.rest.issues.createComment({
+        owner,
+        repo,
+        issue_number: pr_number,
+        body: combineMessage.join('\n')
+    });
+}
+
+async function setLabels(owner, repo, pr_number, octokit, changedJsonfiles, changedJSfiles) {
+    const labels = [];
+    if (changedJsonfiles.length >= 1) labels.push(':warning: unsafe [ package.json ]');
+    if (changedJSfiles.length >= 1) labels.push(':warning: unsafe [ .js ]');
+
+    if (labels.length) {
+        await octokit.rest.issues.addLabels({
+            owner,
+            repo,
+            issue_number: pr_number,
+            labels
+        });
+    }
+}
 
 const main = async () => {
     try {
-        /**
-         * We need to fetch all the inputs that were provided to our action
-         * and store them in variables for us to use.
-         **/
+
         const owner = core.getInput('owner', { required: true });
         const repo = core.getInput('repo', { required: true });
-        const pr_number = core.getInput('pr_number', { required: true });
         const token = core.getInput('token', { required: true });
-
-        /**
-         * Now we need to create an instance of Octokit which will use to call
-         * GitHub's REST API endpoints.
-         * We will pass the token as an argument to the constructor. This token
-         * will be used to authenticate our requests.
-         * You can find all the information about how to use Octokit here:
-         * https://octokit.github.io/rest.js/v18
-         **/
+        const triggerType = core.getInput('type', { required: true });
         const octokit = new github.getOctokit(token);
+        let alertType = core.getInput('alert_type', { required: true });
+        alertType = alertType.split(',');
+        alertType = alertType.map(element => element.trim());
 
-        /**
-         * We need to fetch the list of files that were changes in the Pull Request
-         * and store them in a variable.
-         * We use octokit.paginate() to automatically loop over all the pages of the
-         * results.
-         * Reference: https://octokit.github.io/rest.js/v18#pulls-list-files
-         */
-
-        const changedFiles = await octokit.paginate("GET /repos/:owner/:repo/pulls/:pull_number/files", {
+        const pullRequests = await octokit.paginate("GET /repos/:owner/:repo/pulls", {
             owner: owner,
             repo: repo,
-            pull_number: pr_number
+            state: "open"
         });
 
-        let changedJSfiles = [];
-        let changedJsonfiles = [];
+        let prNums = triggerType === 'check_pr'
+            ? [core.getInput('pr_number', { required: false })] : pullRequests.map(pr => pr.number);
 
-        for (const file of changedFiles) {
+        for (const num of prNums) {
+            const changedFiles = await octokit.paginate("GET /repos/:owner/:repo/pulls/:pull_number/files", {
+                owner: owner,
+                repo: repo,
+                pull_number: num
+            });
 
-            const changedLines = parsePatch(file.patch)
+            let changedJSfiles = [];
+            let changedJsonfiles = [];
 
-            if (changedLines.added.every(item => item.trim() === "")) {
-                continue;
-            }
+            for (const file of changedFiles) {
 
-            const fileExtension = getFileExtension(file.filename)
-            if (fileExtension === 'js') {
-                const numChangedLines = detectJSChange(changedLines.added)
-                if (numChangedLines >= 1) {
-                    changedJSfiles.push(`:black_medium_small_square: ${numChangedLines.toString()} changes in \`${file.filename}\``);
+                const changedLines = parsePatch(file.patch)
+
+                if (changedLines.added.every(item => item.trim() === "")) {
+                    continue;
+                }
+
+                const fileExtension = getFileExtension(file.filename)
+                if (fileExtension === 'js') {
+                    const numChangedLines = detectJSChange(changedLines.added)
+                    if (numChangedLines >= 1) {
+                        changedJSfiles.push(`:black_medium_small_square: ${numChangedLines.toString()} changes in \`${file.filename}\``);
+                    }
+                }
+
+                if (file.filename.includes('package.json')) {
+                    changedJsonfiles.push(`:black_medium_small_square: ${file.additions.toString()} changes in \`${file.filename}\``)
                 }
             }
 
-            if (file.filename.includes('package.json')) {
-                changedJsonfiles.push(`:black_medium_small_square: ${file.additions.toString()} changes in \`${file.filename}\``)
+            if (changedJsonfiles.length >= 1 || changedJSfiles.length >= 1) {
+                if (alertType.includes("comment")) {
+                    alertMessages(owner, repo, num, octokit, changedJsonfiles, changedJSfiles);
+                }
+                if (alertType.includes("label")) {
+                    setLabels(owner, repo, num, octokit, changedJsonfiles, changedJSfiles);
+                }
             }
-        }
 
-        let combineMessage = [];
-        combineMessage.push('# Please be aware!!')
-        if (changedJsonfiles.length >= 1) {
-            combineMessage.push(`## Changes have been made to **package.json** file :triangular_flag_on_post: \n${changedJsonfiles.join('\n')}`)
-        }
-
-        if (changedJSfiles.length >= 1) {
-            combineMessage.push(`## Changes have been made to **require()** in .js file(s) :triangular_flag_on_post: \n${changedJSfiles.join('\n')} `)
-        }
-
-        if (changedJsonfiles.length >= 1 || changedJSfiles.length >= 1) {
-            await octokit.rest.issues.createComment({
-                owner,
-                repo,
-                issue_number: pr_number,
-                body: combineMessage.join('\n')
-            });
         }
 
     } catch (error) {
@@ -9938,6 +9956,7 @@ const main = async () => {
 
 // Call the main function to run the action
 main();
+
 })();
 
 module.exports = __webpack_exports__;

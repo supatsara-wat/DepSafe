@@ -3,17 +3,36 @@ name: DepSafe
 on: 
   pull_request_target:
     types: [opened, reopened, synchronize]
+  release:
+    types: [published]
 
 jobs:
 
-  detect-unsafe:
+  detect-unsafe-pr:
     runs-on: ubuntu-latest
-    name: Check pull request with changes
+    name: Check a pull request
+    if: github.event_name == 'pull_request_target'
     steps:
-      - name: Check PR
-        uses: supatsara-wat/DepSafe@release_feature
+      - name: Detect Unsafe PR
+        uses: supatsara-wat/DepSafe@main
         with:
           owner: ${{ github.repository_owner }}
           repo: ${{ github.event.repository.name }}
           pr_number: ${{ github.event.number }}
           token: ${{ secrets.GITHUB_TOKEN }}
+          type: "check_pr"
+          alert_type: "comment"
+
+  check-unsafe-all:
+    runs-on: ubuntu-latest
+    name: Check all opened pull requests where a release was published
+    if: github.event_name == 'release'
+    steps:
+      - name: Check Unsafe PRs
+        uses: supatsara-wat/DepSafe@main
+        with:
+          owner: ${{ github.repository_owner }}
+          repo: ${{ github.event.repository.name }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          type: "check_all"
+          alert_type: "label"
