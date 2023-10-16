@@ -14,7 +14,7 @@ jobs:
     if: github.event_name == 'pull_request_target'
     steps:
       - name: Detect Unsafe PR
-        uses: supatsara-wat/DepSafe@release_feature
+        uses: supatsara-wat/DepSafe@main
         with:
           owner: ${{ github.repository_owner }}
           repo: ${{ github.event.repository.name }}
@@ -29,7 +29,7 @@ jobs:
     if: github.event_name == 'release'
     steps:
       - name: Check Unsafe PRs
-        uses: supatsara-wat/DepSafe@release_feature
+        uses: supatsara-wat/DepSafe@main
         with:
           owner: ${{ github.repository_owner }}
           repo: ${{ github.event.repository.name }}
