@@ -84,7 +84,10 @@ const main = async () => {
         const token = core.getInput('token', { required: true });
         const triggerType = core.getInput('type', { required: true });
         const octokit = new github.getOctokit(token);
-
+        let alertType = core.getInput('alert_type', { required: true });
+        alertType = alertType.split(',');
+        alertType = alertType.map(element => element.trim());
+        console.log(alertType);
 
         const pullRequests = await octokit.paginate("GET /repos/:owner/:repo/pulls", {
             owner: owner,
@@ -127,16 +130,15 @@ const main = async () => {
             }
 
             if (changedJsonfiles.length >= 1 || changedJSfiles.length >= 1) {
-                if (triggerType === 'check_pr') {
+                if (alertType.includes("comment")) {
                     alertMessages(owner, repo, num, octokit, changedJsonfiles, changedJSfiles);
                 }
-                else {
+                if (alertType.includes("label")) {
                     setLabels(owner, repo, num, octokit, changedJsonfiles, changedJSfiles);
                 }
             }
 
         }
-
 
     } catch (error) {
         core.setFailed(error.message);

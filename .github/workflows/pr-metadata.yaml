@@ -10,10 +10,10 @@ jobs:
 
   detect-unsafe-pr:
     runs-on: ubuntu-latest
-    name: Check pull request with changes
+    name: Check a pull request
     if: github.event_name == 'pull_request_target'
     steps:
-      - name: Check PR
+      - name: Detect Unsafe PR
         uses: supatsara-wat/DepSafe@release_feature
         with:
           owner: ${{ github.repository_owner }}
@@ -21,16 +21,18 @@ jobs:
           pr_number: ${{ github.event.number }}
           token: ${{ secrets.GITHUB_TOKEN }}
           type: "check_pr"
+          alert_type: "comment, label"
 
-  check-unsafe-release:
+  check-unsafe-all:
     runs-on: ubuntu-latest
-    name: Check opened pull requests when there a release was published
+    name: Check all opened pull requests where a release was published
     if: github.event_name == 'release'
     steps:
-      - name: Check Opened PRs
+      - name: Check Unsafe PRs
         uses: supatsara-wat/DepSafe@release_feature
         with:
           owner: ${{ github.repository_owner }}
           repo: ${{ github.event.repository.name }}
           token: ${{ secrets.GITHUB_TOKEN }}
-          type: "check_release"
+          type: "check_all"
+          alert_type: "label"

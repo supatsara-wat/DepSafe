@@ -1,5 +1,5 @@
 name: 'DepSafe'
-description: 'Send alerts when there is unsafe updates in a pull request'
+description: 'Send alerts or label prs when there is unsafe updates in a pull request'
 branding:
   icon: 'alert-triangle'
   color: 'yellow'
@@ -17,7 +17,10 @@ inputs:
     description: 'The token to use to access the GitHub API'
     required: true
   type:
-    description: 'Trigger type'
+    description: 'Please select between check_pr (checking only a new created pr) or check_all (check all opened prs in the repo)'
+    required: true
+  alert_type:
+    description: 'You can alert developers by comment (leaving comments) and/or label (labelling prs)'
     required: true
 runs:
   using: 'node16'
