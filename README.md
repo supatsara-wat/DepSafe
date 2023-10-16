@@ -34,21 +34,42 @@ name: DepSafe
 on: 
   pull_request_target:
     types: [opened, reopened, synchronize]
+  release:
+    types: [published]
 
 jobs:
 
-  detect-unsafe:
+  detect-unsafe-pr:
     runs-on: ubuntu-latest
-    name: Check pull request with changes
+    name: Check a pull request
+    if: github.event_name == 'pull_request_target'
     steps:
-      - name: Check PR
-        uses: supatsara-wat/DepSafe@v1.0.2 (or other latest versions)
+      - name: Detect Unsafe PR
+        uses: supatsara-wat/DepSafe@v2.0.0 (or other versions)
         with:
           owner: ${{ github.repository_owner }}
           repo: ${{ github.event.repository.name }}
           pr_number: ${{ github.event.number }}
           token: ${{ secrets.GITHUB_TOKEN }}
+          type: "check_pr"
+          alert_type: "comment"
+
+  check-unsafe-all:
+    runs-on: ubuntu-latest
+    name: Check all opened pull requests where a release was published
+    if: github.event_name == 'release'
+    steps:
+      - name: Check Unsafe PRs
+        uses: supatsara-wat/DepSafe@v2.0.0
+        with:
+          owner: ${{ github.repository_owner }}
+          repo: ${{ github.event.repository.name }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          type: "check_all"
+          alert_type: "label"
 ```
+
+With this workflow file, DepSafe can identify and highlight unsafe updates in **open pull requests by leaving comments to notify developers**. Upon the publication of a release, DepSafe also **scans through all open pull requests in the repositories, adding labels to draw developers' attention to any detected unsafe updates**.
 
 4. Don't forget to allow write permission for the GitHub workflow!!
 `Settings tab > Actions > General and scroll down to the “Workflow permissions” section.`
