@@ -1,9 +1,11 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
+const github = require('@actions/github2');
 
 function parsePatch(patch) {
     const added = [];
     const removed = [];
+    const a= [];
 
     const lines = patch.split('\n');
     for (const line of lines) {
@@ -11,6 +13,7 @@ function parsePatch(patch) {
             added.push(line.substring(1));
         } else if (line.startsWith('-')) {
             removed.push(line.substring(1));
+            console.log()
         }
     }
 
