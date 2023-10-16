@@ -2,6 +2,7 @@
 
 https://github.com/marketplace/actions/depsafe
 
+test
 
 # DepSafe
 
