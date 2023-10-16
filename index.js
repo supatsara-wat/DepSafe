@@ -61,6 +61,21 @@ async function alertMessages(owner, repo, pr_number, octokit, changedJsonfiles, 
     });
 }
 
+async function setLabels(owner, repo, pr_number, octokit, changedJsonfiles, changedJSfiles) {
+    const labels = [];
+    if (changedJsonfiles.length >= 1) labels.push(':warning: unsafe **package.json**');
+    if (changedJSfiles.length >= 1) labels.push(':warning: unsafe **.js**');
+
+    if (labels.length) {
+        await octokit.rest.issues.addLabels({
+            owner,
+            repo,
+            issue_number: pr_number,
+            labels
+        });
+    }
+}
+
 const main = async () => {
     try {
 
@@ -132,27 +147,8 @@ const main = async () => {
 
             if (changedJsonfiles.length >= 1 || changedJSfiles.length >= 1) {
                 if (triggerType === 'PR') {
-
                     alertMessages(owner, repo, pr_number, octokit, changedJsonfiles, changedJSfiles);
-                    if (changedJsonfiles.length >= 1) {
-                        const label = ':warning: unsafe package.json'
-                        await octokit.rest.issues.addLabels({
-                            owner,
-                            repo,
-                            issue_number: pr_number,
-                            labels: [label],
-                        });
-                    }
-
-                    if (changedJSfiles.length >= 1) {
-                        const label = ':warning: unsafe .js'
-                        await octokit.rest.issues.addLabels({
-                            owner,
-                            repo,
-                            issue_number: pr_number,
-                            labels: [label],
-                        });
-                    }
+                    setLabels(owner, repo, pr_number, octokit, changedJsonfiles, changedJSfiles);
                 }
             }
 
