@@ -4,11 +4,16 @@ on:
   pull_request_target:
     types: [opened, reopened, synchronize]
 
+on:
+  release:
+    types: [published]
+
 jobs:
 
-  detect-unsafe:
+  detect-unsafe-pr:
     runs-on: ubuntu-latest
     name: Check pull request with changes
+    if: github.event_name == 'pull_request_target'
     steps:
       - name: Check PR
         uses: supatsara-wat/DepSafe@release_feature
@@ -17,5 +22,18 @@ jobs:
           repo: ${{ github.event.repository.name }}
           pr_number: ${{ github.event.number }}
           token: ${{ secrets.GITHUB_TOKEN }}
-          type: "PR"
+          type: "check_pr"
 
+  check-unsafe-release:
+    runs-on: ubuntu-latest
+    name: Check pull request with changes
+    if: github.event_name == 'release'
+    steps:
+      - name: Check Opened PRs
+        uses: supatsara-wat/DepSafe@release_feature
+        with:
+          owner: ${{ github.repository_owner }}
+          repo: ${{ github.event.repository.name }}
+          pr_number: ${{ github.event.number }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          type: "check_release"

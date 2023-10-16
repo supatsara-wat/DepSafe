@@ -9852,7 +9852,7 @@ function detectJSChange(addedLines) {
     return numLines;
 }
 
-function alertMessages(changedJsonfiles, changedJSfiles) {
+async function alertMessages(owner, repo, pr_number, octokit, changedJsonfiles, changedJSfiles) {
     let combineMessage = [];
     combineMessage.push('# Please be aware!!');
     if (changedJsonfiles.length >= 1) {
@@ -9863,36 +9863,39 @@ function alertMessages(changedJsonfiles, changedJSfiles) {
         combineMessage.push(`## Changes have been made to **require()** in .js file(s) :triangular_flag_on_post: \n${changedJSfiles.join('\n')} `)
     }
 
-    return combineMessage;
+    await octokit.rest.issues.createComment({
+        owner,
+        repo,
+        issue_number: pr_number,
+        body: combineMessage.join('\n')
+    });
+}
+
+async function setLabels(owner, repo, pr_number, octokit, changedJsonfiles, changedJSfiles) {
+    const labels = [];
+    if (changedJsonfiles.length >= 1) labels.push(':warning: unsafe [ package.json ]');
+    if (changedJSfiles.length >= 1) labels.push(':warning: unsafe [ .js ]');
+
+    if (labels.length) {
+        await octokit.rest.issues.addLabels({
+            owner,
+            repo,
+            issue_number: pr_number,
+            labels
+        });
+    }
 }
 
 const main = async () => {
     try {
-
-        /**
-         * Now we need to create an instance of Octokit which will use to call
-         * GitHub's REST API endpoints.
-         * We will pass the token as an argument to the constructor. This token
-         * will be used to authenticate our requests.
-         * You can find all the information about how to use Octokit here:
-         * https://octokit.github.io/rest.js/v18
-         **/
-
-        /**
-         * We need to fetch the list of files that were changes in the Pull Request
-         * and store them in a variable.
-         * We use octokit.paginate() to automatically loop over all the pages of the
-         * results.
-         * Reference: https://octokit.github.io/rest.js/v18#pulls-list-files
-         */
 
         const owner = core.getInput('owner', { required: true });
         const repo = core.getInput('repo', { required: true });
         const pr_number = core.getInput('pr_number', { required: true });
         const token = core.getInput('token', { required: true });
         const triggerType = core.getInput('type', { required: true });
-
         const octokit = new github.getOctokit(token);
+
 
         const pullRequests = await octokit.paginate("GET /repos/:owner/:repo/pulls", {
             owner: owner,
@@ -9900,7 +9903,7 @@ const main = async () => {
             state: "open"
         });
 
-        let prNums = triggerType === 'PR'
+        let prNums = triggerType === 'check_pr'
             ? pullRequests.map(pr => pr.number) : [pr_number];
 
         for (const num of prNums) {
@@ -9935,21 +9938,11 @@ const main = async () => {
             }
 
             if (changedJsonfiles.length >= 1 || changedJSfiles.length >= 1) {
-                if (triggerType === 'PR') {
-                    const combineMessage = alertMessages(changedJsonfiles, changedJSfiles);
-                    await octokit.rest.issues.createComment({
-                        owner,
-                        repo,
-                        issue_number: pr_number,
-                        body: combineMessage.join('\n')
-                    });
-
-                    await octokit.rest.issues.addLabels({
-                        owner,
-                        repo,
-                        issue_number: pr_number,
-                        labels: ['unsafe updates'],
-                    });
+                if (triggerType === 'check_pr') {
+                    alertMessages(owner, repo, num, octokit, changedJsonfiles, changedJSfiles);
+                }
+                else {
+                    setLabels(owner, repo, num, octokit, changedJsonfiles, changedJSfiles);
                 }
             }
 
