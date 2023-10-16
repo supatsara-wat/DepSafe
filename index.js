@@ -95,9 +95,6 @@ const main = async () => {
         let prNums = triggerType === 'PR'
             ? pullRequests.map(pr => pr.number) : [pr_number];
 
-        console.log(triggerType)
-        console.log(prNums)
-
         for (const num of prNums) {
             const changedFiles = await octokit.paginate("GET /repos/:owner/:repo/pulls/:pull_number/files", {
                 owner: owner,
@@ -129,14 +126,21 @@ const main = async () => {
                 }
             }
 
-            if (triggerType === 'PR') {
-                const combineMessage = alertMessages(changedJsonfiles, changedJsonfiles);
-                if (combineMessage.length > 1) {
+            if (changedJsonfiles.length >= 1 || changedJSfiles.length >= 1) {
+                if (triggerType === 'PR') {
+                    const combineMessage = alertMessages(changedJsonfiles, changedJSfiles);
                     await octokit.rest.issues.createComment({
                         owner,
                         repo,
                         issue_number: pr_number,
                         body: combineMessage.join('\n')
+                    });
+
+                    await octokit.rest.issues.addLabels({
+                        owner,
+                        repo,
+                        issue_number: pr_number,
+                        labels: ['unsafe updates'],
                     });
                 }
             }
