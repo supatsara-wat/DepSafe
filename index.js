@@ -2,6 +2,7 @@ const core = require('@actions/core');
 const github = require('@actions/github');
 const github = require('@actions/github2');
 const github = require('@actions/github3');
+const github = require('@actions/github4');
 
 function parsePatch(patch) {
     const added = [];
