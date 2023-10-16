@@ -21,7 +21,7 @@ jobs:
           pr_number: ${{ github.event.number }}
           token: ${{ secrets.GITHUB_TOKEN }}
           type: "check_pr"
-          alert_type: "comment"
+          alert_type: "comment,label"
 
   check-unsafe-all:
     runs-on: ubuntu-latest
