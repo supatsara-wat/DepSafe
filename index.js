@@ -87,7 +87,6 @@ const main = async () => {
         let alertType = core.getInput('alert_type', { required: true });
         alertType = alertType.split(',');
         alertType = alertType.map(element => element.trim());
-        console.log(alertType);
 
         const pullRequests = await octokit.paginate("GET /repos/:owner/:repo/pulls", {
             owner: owner,
