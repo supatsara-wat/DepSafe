@@ -84,6 +84,14 @@ const main = async () => {
 
         const octokit = new github.getOctokit(token);
 
+        // update labels
+        await octokit.rest.issues.updateLabel({
+            owner,
+            repo,
+            name: 'unsafe',
+            color: '#CD5C5C' // New color code without the '#', e.g., 'FFFFF'
+        });
+
         const pullRequests = await octokit.paginate("GET /repos/:owner/:repo/pulls", {
             owner: owner,
             repo: repo,
@@ -138,7 +146,7 @@ const main = async () => {
                         owner,
                         repo,
                         issue_number: pr_number,
-                        labels: ['unsafe updates'],
+                        labels: ['unsafe'],
                     });
                 }
             }
