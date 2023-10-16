@@ -172,7 +172,7 @@ const main = async () => {
                         body: combineMessage.join('\n')
                     });
 
-                    const label = ':warning: unsafe updates'
+                    const label = ':warning: unsafe'
                     checkLabelExists(owner, repo, label, octokit);
                     await octokit.rest.issues.addLabels({
                         owner,
