@@ -10,7 +10,7 @@ function parsePatch(patch) {
     const lines = patch.split('\n');
     for (const line of lines) {
         if (line.startsWith('+')) {
-            added.push(line.substring(1));
+            added.push(line.substring(2));
         } else if (line.startsWith('-')) {
             removed.push(line.substring(1));
         }
