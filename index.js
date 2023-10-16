@@ -124,14 +124,21 @@ const main = async () => {
                 }
             }
 
-            const combineMessage = alertMessages(changedJsonfiles, changedJSfiles);
-            if (combineMessage.length > 1) {
+            if (changedJsonfiles.length >= 1 || changedJSfiles.length >= 1) {
                 if (triggerType === 'PR') {
+                    const combineMessage = alertMessages(changedJsonfiles, changedJSfiles);
                     await octokit.rest.issues.createComment({
                         owner,
                         repo,
                         issue_number: pr_number,
                         body: combineMessage.join('\n')
+                    });
+
+                    await octokit.rest.issues.addLabels({
+                        owner,
+                        repo,
+                        issue_number: pr_number,
+                        labels: ['unsafe updates'],
                     });
                 }
             }
