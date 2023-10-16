@@ -9866,6 +9866,43 @@ function alertMessages(changedJsonfiles, changedJSfiles) {
     return combineMessage;
 }
 
+async function checkLabelExists(owner, repo, labelName, octokit) {
+    try {
+        // Fetching all labels in the repository
+        const labels = await octokit.paginate(octokit.rest.issues.listLabelsForRepo, {
+            owner,
+            repo
+        });
+
+        // Checking if the label exists in the fetched labels
+        const labelExists = labels.some(label => label.name === labelName);
+        console.log(labels)
+        console.log(labelExists)
+
+        if (labelExists) {
+            await octokit.rest.issues.updateLabel({
+                owner,
+                repo,
+                name: labelName,
+                color: '#CD5C5C'
+            });
+            console.log('create new label');
+        }
+        else {
+            await octokit.rest.issues.createLabel({
+                owner,
+                repo,
+                name: labelName,
+                color: '#CD5C5C'
+            });
+            console.log('update label');
+        }
+    }
+    catch (error) {
+        core.setFailed(error.message);
+    }
+}
+
 const main = async () => {
     try {
 
@@ -9894,13 +9931,6 @@ const main = async () => {
 
         const octokit = new github.getOctokit(token);
 
-        // update labels
-        await octokit.rest.issues.updateLabel({
-            owner,
-            repo,
-            name: 'unsafe',
-            color: '#CD5C5C' // New color code without the '#', e.g., 'FFFFF'
-        });
 
         const pullRequests = await octokit.paginate("GET /repos/:owner/:repo/pulls", {
             owner: owner,
@@ -9952,11 +9982,13 @@ const main = async () => {
                         body: combineMessage.join('\n')
                     });
 
+                    const label = ':warning: unsafe updates'
+                    checkLabelExists(owner, repo, label, octokit);
                     await octokit.rest.issues.addLabels({
                         owner,
                         repo,
                         issue_number: pr_number,
-                        labels: ['unsafe'],
+                        labels: [label],
                     });
                 }
             }
