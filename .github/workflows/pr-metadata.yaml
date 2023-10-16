@@ -24,7 +24,7 @@ jobs:
 
   check-unsafe-release:
     runs-on: ubuntu-latest
-    name: Check pull request with changes
+    name: Check opened pull requests when there a release was published
     if: github.event_name == 'release'
     steps:
       - name: Check Opened PRs
