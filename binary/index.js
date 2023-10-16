@@ -9891,7 +9891,6 @@ const main = async () => {
 
         const owner = core.getInput('owner', { required: true });
         const repo = core.getInput('repo', { required: true });
-        const pr_number = core.getInput('pr_number', { required: true });
         const token = core.getInput('token', { required: true });
         const triggerType = core.getInput('type', { required: true });
         const octokit = new github.getOctokit(token);
@@ -9904,7 +9903,7 @@ const main = async () => {
         });
 
         let prNums = triggerType === 'check_pr'
-            ? pullRequests.map(pr => pr.number) : [pr_number];
+            ? pullRequests.map(pr => pr.number) : [core.getInput('pr_number', { required: true })];
 
         for (const num of prNums) {
             const changedFiles = await octokit.paginate("GET /repos/:owner/:repo/pulls/:pull_number/files", {
