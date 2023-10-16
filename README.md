@@ -51,8 +51,8 @@ jobs:
           repo: ${{ github.event.repository.name }}
           pr_number: ${{ github.event.number }}
           token: ${{ secrets.GITHUB_TOKEN }}
-          type: "check_pr"
-          alert_type: "comment"
+          type: "check_pr" (or check_all)
+          alert_type: "comment" (or label or comment, label)
 
   check-unsafe-all:
     runs-on: ubuntu-latest
@@ -70,6 +70,7 @@ jobs:
 ```
 
 With this workflow file, DepSafe can identify and highlight unsafe updates in **open pull requests by leaving comments to notify developers**. Upon the publication of a release, DepSafe also **scans through all open pull requests in the repositories, adding labels to draw developers' attention to any detected unsafe updates**.
+
 
 4. Don't forget to allow write permission for the GitHub workflow!!
 `Settings tab > Actions > General and scroll down to the “Workflow permissions” section.`
