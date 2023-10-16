@@ -9934,9 +9934,9 @@ const main = async () => {
                 }
             }
 
-            if (triggerType === 'PR') {
-                const combineMessage = alertMessages(changedJsonfiles, changedJSfiles);
-                if (combineMessage.length > 1) {
+            const combineMessage = alertMessages(changedJsonfiles, changedJSfiles);
+            if (combineMessage.length > 1) {
+                if (triggerType === 'PR') {
                     await octokit.rest.issues.createComment({
                         owner,
                         repo,
