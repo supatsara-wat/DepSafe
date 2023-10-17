@@ -1,5 +1,6 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
+const helloWorldModule = require('./module.js');
 
 function parsePatch(patch) {
     const added = [];
